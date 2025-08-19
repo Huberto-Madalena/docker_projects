@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      custom_bridge:
+        ipv4_address: 172.18.0.3
+
+  client:
+    image: nginx:latest
+    networks:
+      custom_bridge:
+        ipv4_address: 172.18.0.2
+    # Install iputils-ping in the client container
+    entrypoint: /bin/bash -c "apt-get update && apt-get install -y iputils-ping && tail -f /dev/null"
+
+networks:
+  custom_bridge:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/29
